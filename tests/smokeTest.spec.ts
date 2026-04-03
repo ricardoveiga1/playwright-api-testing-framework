@@ -3,6 +3,7 @@
 //import { RequestHandler } from '../utils/request-handler';  
 import { test } from '../utils/fixtures'; // foi importado tudo na fixture, sem necessidade de improtar no teste
 import { expect } from '@playwright/test' 
+import { APILogger } from '../utils/logger';
 
 let authToken: string
 
@@ -13,8 +14,23 @@ test.beforeAll('Get Token', async ({ api }) => {
         .postRequest(200)
         //console.log(tokenResponse.json())
     authToken = `Token ${tokenResponse.user.token}`
-    console.log(authToken)
+    //console.log(authToken)
     expect(authToken).toBeTruthy()
+})
+
+test('logger test', async ({  }) => {
+    const logger = new APILogger()
+    const logger2 = new APILogger()
+    logger.logRequest('POST', 'https://test.com/api', { Authorization: 'token'}, { foo: 'bar' })
+    logger.logResponse(200, { foo: 'bar' })
+    const logs = logger.getRecentLogs()
+
+    logger2.logRequest('GET', 'https://test.com/api/123', { Authorization: 'token'}, { foo: 'bar' })
+    logger2.logResponse(200, { foo: 'bar' })
+    const logs2 = logger2.getRecentLogs()
+
+    console.log(logs)
+    console.log(logs2)
 })
 
 test('first test', async ({ api }) => { // precisamos passar contexto do api que está na fixture para acessar
