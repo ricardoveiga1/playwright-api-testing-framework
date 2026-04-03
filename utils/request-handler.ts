@@ -6,7 +6,7 @@ export class RequestHandler {
 
     private request: APIRequestContext
     private logger: APILogger
-    private baseUrl: string | undefined
+    private baseUrl: string | undefined // se não passar no teste, será utilizado o defaultBaseUrl, que é passado no construtor da classe, e pode ser configurado na fixture para cada teste ou usar o valor padrão para todos os testes, definido na api-test.config.ts
     private defaultBaseUrl: string
     private apiPath: string = ''
     private queryParams: object = {}
@@ -23,7 +23,7 @@ export class RequestHandler {
     }
 
     url(url: string) {
-        this.baseUrl = url
+        this.baseUrl = url = "https://conduit-api.bondaracademy.com/api"
         return this
     }
 
@@ -135,7 +135,7 @@ export class RequestHandler {
 
 
     private getUrl() {
-        const url = new URL(`${this.baseUrl ?? this.defaultBaseUrl}${this.apiPath}`)
+        const url = new URL(`${this.baseUrl ?? this.defaultBaseUrl}${this.apiPath}`) // lógica para usar a baseUrl definida no teste, ou a defaultBaseUrl definida no construtor da classe, que pode ser configurada na fixture para cada teste ou usar o valor padrão para todos os testes, definido na api-test.config.ts
         for (const [key, value] of Object.entries(this.queryParams)) {
             url.searchParams.append(key, value)
         }

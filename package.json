@@ -2,7 +2,9 @@
   "name": "pw-api-testing",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "auto-commit": "bash ./scripts/git_auto_commit.sh"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
