@@ -16,7 +16,9 @@ export async function createToken(email: string, password: string) {
         .postRequest(200)
     return 'Token ' + tokenResponse.user.token
     } catch(error) {
-        Error.captureStackTrace(error, createToken)
+        if ((Error as any).captureStackTrace) {
+            (Error as any).captureStackTrace(error, createToken)
+        }
         throw error
     } finally {
         await context.dispose()

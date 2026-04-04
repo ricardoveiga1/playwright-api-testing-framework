@@ -5,7 +5,7 @@ git add .
 
 # Commit the changes with a message
 # Replace 'Auto commit' with your desired commit message
-git commit -m "Auto commit logger test"
+git commit -m "Auto commit"
 
 # Force push to the remote repository
 # Replace 'main' with your branch name if different

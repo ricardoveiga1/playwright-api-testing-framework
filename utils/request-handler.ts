@@ -56,12 +56,12 @@ export class RequestHandler {
         let responseJSON: any
 
         const url = this.getUrl()
-        await test.step(`GET request to: ${url}`, async () => {
+        await test.step(`GET request to: ${url}`, async () => { // desta forma em função reduz quantidade de steps no log pós execução, foi importado test do playwright
             this.logger.logRequest('GET', url, this.getHeades())
             const response = await this.request.get(url, {
-                headers: this.getHeades()
+                headers: this.getHeades()//estamos passando heardes default como authorization, antes era o headers
             })
-            this.cleanupFields()
+            this.cleanupFields()// precisamos limpar os campos por causa do token que foi setado como padrão em todo request
             const actualStatus = response.status()
             responseJSON = await response.json()
     
@@ -146,7 +146,9 @@ export class RequestHandler {
         if (actualStatus !== expectStatus) {
             const logs = this.logger.getRecentLogs()
             const error = new Error(`Expected status ${expectStatus} but got ${actualStatus}\n\nRecent API Activity: \n${logs}`)
-            Error.captureStackTrace(error, callingMethod)
+            if ((Error as any).captureStackTrace) { // captura a stack trace do erro, e passa o método que chamou a função de validação de status para que a stack trace mostre o local correto do erro, ao invés de mostrar o local da função de validação de status, o que pode ser confuso para identificar onde o erro realmente ocorreu no teste
+                (Error as any).captureStackTrace(error, callingMethod)
+            }
             throw error
         }
     }
@@ -164,7 +166,7 @@ export class RequestHandler {
         this.baseUrl = undefined
         this.apiPath = ''
         this.queryParams = {}
-        this.clearAuthFlag = false
+        this.clearAuthFlag = false // DEFAULT DO CLEAR AUTH FALSE, só vai limpar, se fizemos manualmente
     }
 
 }

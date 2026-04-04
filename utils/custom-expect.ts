@@ -1,6 +1,14 @@
 import { expect as baseExpect } from '@playwright/test';
 import { APILogger } from './logger';
 import { validateSchema } from './schema-validator';
+// https://playwright.dev/docs/test-assertions#add-custom-matchers-using-expectextend
+// Essa classe é um exemplo de como criar matchers personalizados para o expect do Playwright, 
+// para adicionar mais informações de contexto, como os logs das requisições e respostas da API, 
+// para facilitar a identificação de erros nos testes. 
+// A função setCustomExpectLogger é usada para passar a instância do APILogger para o custom expect, 
+// para que ele possa acessar os logs recentes e incluir nas mensagens de erro dos matchers personalizados. 
+// Assim, quando um matcher personalizado falhar, ele vai mostrar a mensagem de erro personalizada, 
+// junto com os logs recentes da API, para ajudar na identificação do problema.
 
 let apiLogger: APILogger
 
@@ -8,6 +16,7 @@ export const setCustomExpectLogger = (logger: APILogger) => {
     apiLogger = logger
 }
 
+// aqui estamos estendendo o expect do Playwright para adicionar novos matchers personalizados, como shouldEqual, shouldBeLessThanOrEqual, e shouldMatchSchema, que são usados nos testes para validar as respostas da API, e incluir os logs recentes da API nas mensagens de erro, para facilitar a identificação de problemas nos testes.
 declare global {
     namespace PlaywrightTest {
         interface Matchers<R, T>{
@@ -62,7 +71,7 @@ export const expect = baseExpect.extend({
             `Recent API Activity: \n${logs}`
 
         return {
-            message: () => message,
+            message: () => message,// a função message é uma função que retorna a mensagem de erro personalizada, que inclui os logs recentes da API, para ajudar na identificação do problema, e o pass é um booleano que indica se o matcher passou ou falhou.
             pass
         };
     },
