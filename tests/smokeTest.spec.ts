@@ -7,6 +7,7 @@ import { expect } from '../utils/custom-expect' // importando o expect personali
 // junto com os logs recentes da API, para ajudar na identificação de problemas nos testes. O expect personalizado é configurado para acessar a instância do APILogger, que é passada na fixture, para acessar os logs recentes da API e incluir nas mensagens de erro dos matchers personalizados. Dessa forma, podemos ter mais contexto sobre o que aconteceu na API antes do erro ocorrer no teste, o que facilita a identificação do problema e a correção do teste ou da API
 import { APILogger } from '../utils/logger';
 import { createToken } from '../helpers/createToken';
+import { validateSchema } from '../utils/schema-validator';
 
 let authToken: string
 
@@ -75,6 +76,8 @@ test('Get Test Tags', async ({ api }) => {
         .params({ limit: 10, offset: 0 })
         .getRequest(200)
         //console.log(response)
+        //await validateSchema('tags', 'GET_tags', response)
+        await expect(response).shouldMatchSchema('tags', 'GET_tags', true)// passando true gera o schema automaticamente 
         expect(response.tags[0]).shouldEqual('Test')
         expect(response.tags.length).shouldBeLessThanOrEqual(10)
 })
