@@ -9,6 +9,8 @@ import { APILogger } from '../utils/logger';
 import { createToken } from '../helpers/createToken';
 import { validateSchema } from '../utils/schema-validator';
 import articleRequestPayload from '../request-objects/POST-article.json'
+import { faker } from '@faker-js/faker';
+import { generateNewRandomArticle } from '../utils/data-generator';
 
 let authToken: string
 
@@ -157,6 +159,40 @@ test('Create and Delete Article', async ({ api }) => {
         .getRequest(200)
     //await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
     expect(articlesResponseTwo.articles[0].title).not.shouldEqual(newTitle)
+})
+
+test('Create and Delete Article with Faker JS', async ({ api }) => {
+
+    // const articleTitle = faker.lorem.sentence(5) // substituindo title do payload
+    // const articleRequest = JSON.parse(JSON.stringify(articleRequestPayload))
+    //articleRequest.article.title = articleTitle //setando faker title
+
+    const articleRequest = generateNewRandomArticle()
+
+    console.log(articleRequest)
+    const createArticleResponse = await api
+        .path('/articles')
+        .body(articleRequest)
+        .postRequest(201)
+    await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
+    expect(createArticleResponse.article.title).shouldEqual(articleRequest.article.title)
+    const slugId = createArticleResponse.article.slug
+
+    const articlesResponse = await api
+        .path('/articles')
+        .params({ limit: 10, offset: 0 })
+        .getRequest(200)
+    expect(articlesResponse.articles[0].title).shouldEqual(articleRequest.article.title)
+
+    await api
+        .path(`/articles/${slugId}`)
+        .deleteRequest(204)
+
+    const articlesResponseTwo = await api
+        .path('/articles')
+        .params({ limit: 10, offset: 0 })
+        .getRequest(200)
+    expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleRequest.article.title)
 })
 
 test('Create. Update and Delete Article', async ({ api }) => {

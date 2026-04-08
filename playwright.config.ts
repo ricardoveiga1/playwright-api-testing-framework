@@ -41,7 +41,7 @@ export default defineConfig({
     },
     {
       name: 'smoke-tests',
-      testMatch: 'smoke*', // todos que possuem smoke no nome, ou seja, smokeTest.spec.ts, smokeTest2.spec.ts, etc // npx playwright test --project smoke-tests
+      //testMatch: 'smoke*', // todos que possuem smoke no nome, ou seja, smokeTest.spec.ts, smokeTest2.spec.ts, etc // npx playwright test --project smoke-tests
     },
    
   ],
