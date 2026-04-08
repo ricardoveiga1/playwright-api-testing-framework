@@ -8,6 +8,7 @@ import { expect } from '../utils/custom-expect' // importando o expect personali
 import { APILogger } from '../utils/logger';
 import { createToken } from '../helpers/createToken';
 import { validateSchema } from '../utils/schema-validator';
+import articleRequestPayload from '../request-objects/POST-article.json'
 
 let authToken: string
 
@@ -102,8 +103,12 @@ test('Testing clearfields', async ({ api }) => {
 
 
 test('Create and Delete Article', async ({ api }) => {
+
+    const newTitle = articleRequestPayload.article.title = 'This is an object title' // aqui estamos setando o título do artigo dinamicamente, para garantir que o título seja único e evitar conflitos com artigos existentes, caso o teste seja execut
+
+    console.log('Article title set to: ' + newTitle)
     // Check if article with this title already exists and delete it to avoid conflicts
-    const searchKeywords = ['Test', 'TWO', 'TEST']
+    const searchKeywords = ['This', 'object', 'title']
     const articlesListResponse = await api
         .path('/articles')
         //.headers({ Authorization: authToken })
@@ -125,11 +130,11 @@ test('Create and Delete Article', async ({ api }) => {
     
     const createArticleResponse = await api
         .path('/articles')
-        .body({ "article": { "title": "Test TWO TEST", "description": "Test description", "body": "Test body", "tagList": [] } })
+        .body(articleRequestPayload)
         //.headers({ Authorization: authToken })
         .postRequest(201)
     //await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
-    expect(createArticleResponse.article.title).shouldEqual('Test TWO TEST')
+    expect(createArticleResponse.article.title).shouldEqual(newTitle)
     const slugId = createArticleResponse.article.slug
 
     const articlesResponse = await api
@@ -138,7 +143,7 @@ test('Create and Delete Article', async ({ api }) => {
         //.headers({ Authorization: authToken })
         .getRequest(200)
     //await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles')
-    expect(articlesResponse.articles[0].title).shouldEqual('Test TWO TEST')
+    expect(articlesResponse.articles[0].title).shouldEqual(newTitle)
 
     await api
         .path(`/articles/${slugId}`)
@@ -151,17 +156,22 @@ test('Create and Delete Article', async ({ api }) => {
         //.headers({ Authorization: authToken })
         .getRequest(200)
     //await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
-    expect(articlesResponseTwo.articles[0].title).not.shouldEqual('Test TWO TEST')
+    expect(articlesResponseTwo.articles[0].title).not.shouldEqual(newTitle)
 })
 
 test('Create. Update and Delete Article', async ({ api }) => {
+
+    //evita que em testes executados em paralelo, ou em execuções múltiplas, tenhamos conflitos de dados, ou seja, tentamos criar um artigo com um título que já existe, o que pode causar falhas nos testes, ou resultados inconsistentes. Dessa forma, garantimos que cada execução do teste tenha um ambiente limpo e controlado, evitando conflitos de dados e garantindo a confiabilidade dos testes ao longo do tempo.
+    const articleNewInstanceRequestPayload = JSON.parse(JSON.stringify(articleRequestPayload)) // aqui estamos criando uma nova instância do payload de criação de artigo, para evitar que as alterações feitas no teste anterior afetem este teste, garantindo que cada teste tenha seu próprio payload independente, e assim, podemos garantir que os testes sejam isolados e não tenham efeitos colaterais entre si, o que é uma boa prática em testes automatizados para garantir a confiabilidade e a manutenção dos testes ao longo do tempo.
+    articleNewInstanceRequestPayload.article.title = 'This is an object title for update' // aqui estamos setando o título do artigo dinamicamente, para garantir que o título seja único e evitar conflitos com artigos existentes, caso o teste seja executado várias vezes, ou em paralelo, garantindo que cada execução do teste tenha um título de artigo único, o que ajuda a evitar conflitos e garantir a confiabilidade dos testes.
+
     const createArticleResponse = await api
         .path('/articles')
-        .body({ "article": { "title": "Test TWO TEST TO UPDATE", "description": "Test description", "body": "Test body", "tagList": [] } })
+        .body(articleRequestPayload)
         //.headers({ Authorization: authToken })
         .postRequest(201)
     //await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
-    expect(createArticleResponse.article.title).shouldEqual('Test TWO TEST TO UPDATE')
+    expect(createArticleResponse.article.title).shouldEqual(articleRequestPayload.article.title)
     const slugId = createArticleResponse.article.slug
 
     const articlesResponse = await api
@@ -170,15 +180,15 @@ test('Create. Update and Delete Article', async ({ api }) => {
         //.headers({ Authorization: authToken })
         .getRequest(200)
     //await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles')
-    expect(articlesResponse.articles[0].title).shouldEqual('Test TWO TEST TO UPDATE')
+    expect(articlesResponse.articles[0].title).shouldEqual(articleRequestPayload.article.title)
 
     const updateArticleResponse = await api
         .path(`/articles/${slugId}`)
-        .body({ "article": { "title": "Updating Test TWO TEST UPDATED", "description": "Test description", "body": "Test body", "tagList": [] } })
+        .body(articleNewInstanceRequestPayload)
         //.headers({ Authorization: authToken })
         .putRequest(200)
     //await expect(updateArticleResponse).shouldMatchSchema('articles', 'PUT_articles')
-    expect(updateArticleResponse.article.title).shouldEqual('Updating Test TWO TEST UPDATED')
+    expect(updateArticleResponse.article.title).shouldEqual(articleNewInstanceRequestPayload.article.title)
     const newSlugId = updateArticleResponse.article.slug
 
     // const newArticlesResponse = await api
@@ -200,5 +210,5 @@ test('Create. Update and Delete Article', async ({ api }) => {
         //.headers({ Authorization: authToken })
         .getRequest(200)
     //await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
-    expect(articlesResponseTwo.articles[0].title).not.shouldEqual('Updating Test TWO TEST UPDATED')
+    expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleNewInstanceRequestPayload.article.title)
 })
