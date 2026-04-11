@@ -2,7 +2,7 @@ import { test as base } from '@playwright/test';  // test aqui é um alias para 
 import { RequestHandler } from '../utils/request-handler';
 import { APILogger } from './logger';
 import { setCustomExpectLogger } from './custom-expect';
-import { config } from '../api-test.config';
+import { config } from '../api.playwright.config';
 import { createToken } from '../helpers/createToken';
 
 // para criar uma fixture personalizada, precisamos usar o método extend do test do Playwright, passando um objeto com as propriedades que queremos adicionar à fixture, e a função que vai criar a instância da fixture, e passar o token de autenticação para os testes, usando o scope 'worker' para que o token seja criado apenas uma vez por worker, e não para cada teste. Assim, podemos acessar a instância do RequestHandler e do APILogger em todos os testes, sem precisar criar uma nova instância para cada teste.

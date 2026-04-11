@@ -1,5 +1,5 @@
 import { RequestHandler } from "../utils/request-handler";
-import { config } from "../api-test.config";
+import { config } from "../api.playwright.config";
 import { APILogger } from "../utils/logger";
 import { request } from "@playwright/test";
 
@@ -8,6 +8,7 @@ export async function createToken(email: string, password: string) {
     const context = await request.newContext()
     const logger = new APILogger()
     const api = new RequestHandler(context, config.apiUrl, logger)
+    console.log('Creating token for user: ' + email)
 
     try {
         const tokenResponse = await api

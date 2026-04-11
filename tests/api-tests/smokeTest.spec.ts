@@ -1,16 +1,16 @@
 // import { expect } from '../utils/custom-exptect';
 //import { test, expect } from '@playwright/test';
 //import { RequestHandler } from '../utils/request-handler';  
-import { test } from '../utils/fixtures'; // foi importado tudo na fixture, sem necessidade de improtar no teste
+import { test } from '../../utils/fixtures'; // foi importado tudo na fixture, sem necessidade de improtar no teste
 //import { expect } from '@playwright/test' 
-import { expect } from '../utils/custom-expect' // importando o expect personalizado, que inclui os logs recentes da API nas mensagens de erro, para facilitar a identificação de problemas nos testes. Assim, quando um matcher personalizado falhar, ele vai mostrar a mensagem de erro personalizada, 
+import { expect } from '../../utils/custom-expect' // importando o expect personalizado, que inclui os logs recentes da API nas mensagens de erro, para facilitar a identificação de problemas nos testes. Assim, quando um matcher personalizado falhar, ele vai mostrar a mensagem de erro personalizada, 
 // junto com os logs recentes da API, para ajudar na identificação de problemas nos testes. O expect personalizado é configurado para acessar a instância do APILogger, que é passada na fixture, para acessar os logs recentes da API e incluir nas mensagens de erro dos matchers personalizados. Dessa forma, podemos ter mais contexto sobre o que aconteceu na API antes do erro ocorrer no teste, o que facilita a identificação do problema e a correção do teste ou da API
-import { APILogger } from '../utils/logger';
-import { createToken } from '../helpers/createToken';
-import { validateSchema } from '../utils/schema-validator';
-import articleRequestPayload from '../request-objects/POST-article.json'
+import { APILogger } from '../../utils/logger';
+import { createToken } from '../../helpers/createToken';
+import { validateSchema } from '../../utils/schema-validator';
+import articleRequestPayload from '../../request-objects/POST-article.json'
 import { faker } from '@faker-js/faker';
-import { generateNewRandomArticle } from '../utils/data-generator';
+import { generateNewRandomArticle } from '../../utils/data-generator';
 
 let authToken: string
 
@@ -34,10 +34,10 @@ let authToken: string
 // })
 
 // Aqui estamos fazendo um override em cima do  do authtoken padrão, ou seja, um token de um usuário 
-test.beforeAll('Get Token', async ({ config }) => {
-    authToken = await createToken('pwtest@test.com', 'Welcome2')
-    console.log(authToken)
-})
+// test.beforeAll('Get Token', async ({ config }) => {
+//     authToken = await createToken('pwtest@test.com', 'Welcome2')
+//     console.log(authToken)
+// })
 
 test('logger test', async ({  }) => {
     const logger = new APILogger()
@@ -54,7 +54,7 @@ test('logger test', async ({  }) => {
     console.log(logs2)
 })
 
-test.only('Get articles', async ({ api }) => { // precisamos passar contexto do api que está na fixture para acessar
+test('Get articles', async ({ api }) => { // precisamos passar contexto do api que está na fixture para acessar
     //const api = new RequestHandler()
 
     const response = await api
@@ -81,7 +81,7 @@ test('Get Test Tags', async ({ api }) => {
         //console.log(response)
         //await validateSchema('tags', 'GET_tags', response)
         await expect(response).shouldMatchSchema('tags', 'GET_tags', true)// passando true gera o schema automaticamente 
-        expect(response.tags[0]).shouldEqual('Test')
+        expect(response.tags[0]).shouldEqual('Test12')
         expect(response.tags.length).shouldBeLessThanOrEqual(10)
 })
 
