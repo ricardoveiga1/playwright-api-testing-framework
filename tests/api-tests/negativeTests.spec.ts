@@ -1,5 +1,5 @@
-import { test} from '../utils/fixtures';
-import { expect } from '../utils/custom-expect';
+import { test} from '../../utils/fixtures';
+import { expect } from '../../utils/custom-expect';
 
 // data driven test for username validation during user creation
 [ 

@@ -10,6 +10,7 @@
     "uiTests": "npx playwright test tests/ui-tests/smokeUITests.spec.ts",
     "uiTests:qa": "TEST_ENV=qa npx playwright test tests/ui-tests/smokeUITests.spec.ts",
     "uiTests:prod": "TEST_ENV=prod npx playwright test tests/ui-tests/smokeUITests.spec.ts",
+    "apiExamples": "npx playwright test tests/api-tests/*example*.spec.ts",
     "show:report": "npx playwright show-report"
   },
   "keywords": [],

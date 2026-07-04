@@ -57,6 +57,12 @@ export default defineConfig({
       testMatch: 'smoke*', // todos que possuem smoke no nome, ou seja, smokeTest.spec.ts, smokeTest2.spec.ts, etc // npx playwright test --project api-smoke-tests
     },
     {
+      name: 'api-example-tests',
+      use: { baseURL: process.env.BASE_URL },
+      testDir: './tests/api-tests',
+      testMatch: '*example*', // todos que possuem example no nome, ou seja, exampleTest.spec.ts, exampleTest2.spec.ts, etc // npx playwright test --project api-example-tests
+    },
+    {
       name: 'ui-tests',
       testDir: './tests/ui-tests',
       use: {
